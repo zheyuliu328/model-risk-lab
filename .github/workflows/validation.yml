@@ -1,0 +1,27 @@
+name: Validation
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        python: ['3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -c requirements-reproduce.txt '.[dev]'
+      - run: python -m ruff check src tests
+      - run: python -m pytest -q
+      - run: model-risk-lab --seed 20260907 --output outputs/ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validation-python-${{ matrix.python }}
+          path: outputs/ci/
+          if-no-files-found: error
