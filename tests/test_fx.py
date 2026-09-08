@@ -1,7 +1,9 @@
 from dataclasses import replace
-from math import exp
+from itertools import product
+from math import exp, log, pi, sqrt
 
 import pytest
+from scipy.integrate import quad
 
 from model_risk_lab.fx import (FXOption, annual_decimal, convergence_experiment,
                                display_greeks, finite_difference, greeks, price)
@@ -118,3 +120,46 @@ def test_invalid_bump_or_kind(greek, bump):
         finite_difference(BASE, "call", greek, bump)
     with pytest.raises(ValueError):
         price(BASE, "digital")
+
+
+@pytest.mark.parametrize("greek", ["delta", "gamma", "vega", "rho_domestic", "rho_foreign"])
+@pytest.mark.parametrize("bump", [1e-30, 1e-200])
+def test_unrepresentable_bump_is_rejected_instead_of_returning_zero(greek, bump):
+    with pytest.raises(ValueError, match="floating-point"):
+        finite_difference(BASE, "call", greek, bump)
+
+
+def test_gamma_denominator_underflow_is_rejected_before_pricing():
+    # Here +/- bump are distinct input floats, but bump squared becomes zero.
+    tiny_quote = replace(BASE, spot=1e-190, strike=1e-190)
+    with pytest.raises(ValueError, match="denominator"):
+        finite_difference(tiny_quote, "call", "gamma", 1e-200)
+
+
+def test_prices_against_independent_payoff_integration_and_inverse_quotes():
+    # Integrate the discounted lognormal payoff directly, without d1/d2 or a CDF.
+    # The +/-12 normal-shock bound is sufficient for this predeclared ordinary grid;
+    # it is not a universal extreme-tail pricing reference.
+    for spot, ratio, t, vol, rates in product(
+        (.01, 1.2, 26000.), (.7, 1., 1.4), (.01, 1., 5.), (.05, .25, .6),
+        ((.05, .02), (-.03, .01)),
+    ):
+        rd, rf = rates
+        strike = spot * ratio
+        option = FXOption(spot, strike, t, vol, rd, rf)
+        drift, diffusion = (rd - rf - vol**2 / 2) * t, vol * sqrt(t)
+        exercise_shock = (log(ratio) - drift) / diffusion
+        for kind, sign in (("call", 1), ("put", -1)):
+            start, end = ((max(-12., exercise_shock), 12.) if sign == 1
+                          else (-12., min(12., exercise_shock)))
+
+            def integrand(z):
+                payoff_per_spot = max(sign * (exp(drift + diffusion*z) - ratio), 0)
+                return payoff_per_spot * exp(-z*z/2) / sqrt(2*pi)
+
+            integral = (0 if start >= end else
+                        quad(integrand, start, end, epsabs=1e-12, epsrel=1e-12)[0])
+            reference = spot * exp(-rd*t) * integral
+            assert price(option, kind) == pytest.approx(reference, abs=1e-10*spot, rel=0)
+        inverse = FXOption(1/spot, 1/strike, t, vol, rf, rd)
+        assert price(option) == pytest.approx(spot*strike*price(inverse, "put"), abs=1e-10*spot, rel=0)

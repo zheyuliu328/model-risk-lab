@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "sha256": {
+    "REPORT.md": "a0b1785f74ed8851b36d7adf38b84896a43145475949ddce6f2637236ca78ce5",
+    "credit_predictions.csv": "22781e1e7013ab5a0da541c6abfd9d4616dd77ff5071d4e65b97cbbcdddf762d",
+    "credit_protocol.svg": "648095fafce1f7dfcacd8b4a2d03259d56b88f9588e3d9963e0efeaaf085e528",
+    "credit_validation.svg": "cf5634e927840b6a6d146443173df76f1dc3fb794e5752351d0bf5e6a5a0999d",
+    "fx_bumps.csv": "67b25df994ba7afdc9d974aaa80575a49c9790adcd1a58921d3a20cf8f62c657",
+    "fx_convergence.svg": "d960204bc266b16329cfb5576d0c28f6569a910cb3d60764955544589cd75220",
+    "results.json": "89a257e0f7538f4a8ddbe9d88d71c73e1410762e2f147894ae31ed9c12d5afd8",
+    "synthetic_quarters.csv": "c6a62122c161c5c5a46c91c9cecc91a073f5d6e02e6180cf66989f1e7f73103d"
+  }
+}

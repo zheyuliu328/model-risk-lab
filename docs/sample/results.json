@@ -1,6 +1,6 @@
 {
   "manifest": {
-    "package_version": "0.1.0",
+    "package_version": "0.1.1",
     "seed": 20260907,
     "input_kind": "fresh synthetic data, no calibration to external records",
     "dependencies": {
@@ -11,10 +11,10 @@
       "matplotlib": "3.10.8"
     },
     "source_sha256": {
-      "__init__.py": "2b6c40571bbb58726d538a41805af94a7eb81e289cda51ebdda540890ec04751",
+      "__init__.py": "2d2731e4a9501c78490dadca8a45f0f1f27e22d4a6723ab4a0b1dee280c8a7c1",
       "credit.py": "b6a964c64d21805fa046e16e07f61e7d24bbb38965a6887399564f39d9e32eab",
-      "fx.py": "b6e159580163c719038c8e1ca33a47da72206b83f44e13fdc4bacc41ac3bf0c6",
-      "report.py": "d38cbfcf641bc5e80e5198d84af5312f517e9d5bc5446f34d1efe419e40cc8b5"
+      "fx.py": "5d7f2cd4a174886ee178d99bf0b987f416d08cefd23e5a6abb59315b732fb8af",
+      "report.py": "cad04fdc69defdfa60fbe0db14307d3d9369fc4b35f076155a38ec20a55e354b"
     },
     "input_sha256": "c6a62122c161c5c5a46c91c9cecc91a073f5d6e02e6180cf66989f1e7f73103d"
   },

@@ -114,13 +114,21 @@ def finite_difference(o: FXOption, kind: str, greek: str, bump: float) -> dict[s
     if o.expiry_years <= 0 or o.volatility_decimal <= 0:
         raise ValueError("finite difference experiment requires a smooth interior point")
     field = fields[greek]
-    if field in ("spot", "volatility_decimal") and getattr(o, field) - bump <= 0:
+    value = getattr(o, field)
+    up, down = value + bump, value - bump
+    if not isfinite(up) or not isfinite(down) or not down < value < up:
+        raise ValueError("bump is outside floating-point resolution or range")
+    if field in ("spot", "volatility_decimal") and down <= 0:
         raise ValueError("bump must stay inside the positive input domain")
-    plus = price(replace(o, **{field: getattr(o, field) + bump}), kind)
-    minus = price(replace(o, **{field: getattr(o, field) - bump}), kind)
+    denominator = bump * bump if greek == "gamma" else 2 * bump
+    if not isfinite(denominator) or denominator == 0:
+        raise ValueError("finite-difference denominator is outside floating-point range")
+    plus = price(replace(o, **{field: up}), kind)
+    minus = price(replace(o, **{field: down}), kind)
     base = price(o, kind)
-    estimate = ((plus - 2 * base + minus) / bump**2 if greek == "gamma"
-                else (plus - minus) / (2 * bump))
+    estimate = ((plus - 2 * base + minus) if greek == "gamma" else (plus - minus)) / denominator
+    if not all(isfinite(v) for v in (plus, minus, base, estimate)):
+        raise ValueError("finite-difference prices or estimate are outside floating-point range")
     return {"bump": bump, "price_plus": plus, "price_base": base,
             "price_minus": minus, "estimate": estimate}
 
