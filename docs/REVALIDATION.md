@@ -13,6 +13,8 @@ clean, non-editable installation. Passing the original test suite was the starti
 
 The build backend minimum also matches the SPDX license-string metadata used by this package,
 following the [Python Packaging guide](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license-and-license-files).
+The minimum is 83.0.0, which also includes the upstream fix for
+[source-distribution exclusion handling on macOS](https://github.com/pypa/setuptools/security/advisories/GHSA-h35f-9h28-mq5c).
 
 ## Evidence
 
