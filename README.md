@@ -5,13 +5,14 @@
 [![Validation](https://github.com/zheyuliu328/model-risk-lab/actions/workflows/validation.yml/badge.svg)](https://github.com/zheyuliu328/model-risk-lab/actions/workflows/validation.yml)
 
 How do you tell whether a model result is trustworthy? This repository turns that question
-into two runnable experiments, using invented inputs and public mathematical methods.
+into two teaching experiments and a configurable monthly regression tool, using public mathematical methods.
 The focus is on finding failure modes and explaining evidence, rather than maximizing a score.
 
 | Experiment | Question | Evidence |
 |:--|:--|:--|
 | **Credit regression** | Does a candidate beat simple baselines when every feature was available at prediction time? | Forward time splits, train-only preprocessing, a locked holdout, deliberately invalid leakage control |
 | **FX option sensitivities** | Do derivatives agree with prices, units and no-arbitrage identities? | Analytical Greeks, price-based finite differences, scaling tests, all bump sizes retained |
+| **Monthly candidate producer** | Which permitted one/two-feature OLS candidates survive forward validation? | Your declared monthly observations, feature lags/release delays, all attempted candidates, two baselines, development-only selection and an explicit holdout reveal |
 
 **[Read the generated validation report →](docs/sample/REPORT.md)** ·
 [Architecture](docs/ARCHITECTURE.md) · [Learning notes / 学习入口](docs/LEARNING_NOTES.md)
@@ -50,6 +51,35 @@ the package accepts a broader compatible range and CI exercises supported Python
 using the recorded numerical versions. After changing code, reinstall the package or run
 `PYTHONPATH=src python -m model_risk_lab.report` directly from the checkout.
 
+## Screen monthly regression candidates
+
+The new `model-risk-forecast` command accepts a documented JSON observation table. It is a reusable
+tool with an optional invented example. For CSV/XLSX field selection and an interactive review,
+use [Forecast Review Workbench](https://github.com/zheyuliu328/forecast-review-workbench).
+
+```bash
+mkdir -p outputs
+model-risk-forecast --example --output outputs/monthly-development
+model-risk-forecast --request outputs/monthly-development/request.json \
+  --reveal-holdout --output outputs/monthly-holdout
+```
+
+Start with `REPORT.md`, then inspect `candidates.csv`, `folds.csv`, `predictions.csv` and
+`failures.csv`. The example has 180 invented months, five permitted features, 15 single/pair
+OLS candidates, two baselines and a 24-month holdout. All candidate failures are retained.
+The first run reports development scores; the second explicitly reveals holdout scores without
+reselecting the development winner. Full raw inputs are included in both evidence bundles.
+
+Replace `rows`, feature declarations and cutoffs in the example request to use your own monthly
+observations. [The input contract and method](docs/FORECAST_METHOD.md) explain the required unique,
+continuous monthly calendar, train-only scaling, common samples, lag/release constraints and
+diagnostics. Supplied target values are used as-is. The tool does not infer publication dates,
+impute missing features, transform the target, or prove that a human has never viewed the holdout.
+
+Exit 0 means evidence was produced with a usable selected candidate; 1 means evidence was produced
+but all OLS candidates failed, or the explicitly requested holdout has no usable selected-candidate
+score. Exit 2 means an input/output error. Existing output directories are never replaced.
+
 ## What makes the experiments useful
 
 - **Information timing is tested.** Shifting a future observation must not change an earlier feature.
@@ -71,13 +101,14 @@ using the recorded numerical versions. After changing code, reinstall the packag
 |:--|:--|
 | Contract and pricing | [fx.py](src/model_risk_lab/fx.py), [FX method and units](docs/FX_METHOD.md) |
 | Synthetic mechanism and time validation | [credit.py](src/model_risk_lab/credit.py), [credit protocol](docs/CREDIT_METHOD.md) |
+| Configurable monthly candidate screening | [forecast.py](src/model_risk_lab/forecast.py), [installed CLI](src/model_risk_lab/forecast_cli.py), [protocol](docs/FORECAST_METHOD.md) |
 | Evidence generation | [report.py](src/model_risk_lab/report.py), [sample results](docs/sample/results.json) |
 | Independent checks | [FX tests](tests/test_fx.py), [credit tests](tests/test_credit.py), [reproduction test](tests/test_report.py) |
 
 ## Scope and authorship
 
 An independent educational project by **Zheyu Liu**, developed with AI-assisted implementation
-and explicit reviewable tests. Every dataset and option scenario in this repository is freshly
+and explicit reviewable tests. Every bundled dataset and option scenario in this repository is freshly
 generated from the documented invented mechanism. No employer/client code, templates,
 market-data subscriptions, confidential outputs or private Git history are included.
 See the [data and source declaration](docs/DATA_AND_SOURCES.md).

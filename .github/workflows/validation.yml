@@ -24,8 +24,13 @@ jobs:
         run: |
           model-risk-lab --seed 20260907 --output validation-report
           model-risk-lab --verify validation-report
+          model-risk-forecast --example --output monthly-development
+          model-risk-forecast --request monthly-development/request.json --reveal-holdout --output monthly-holdout
       - uses: actions/upload-artifact@v4
         with:
           name: validation-python-${{ matrix.python }}
-          path: ${{ runner.temp }}/validation-report/
+          path: |
+            ${{ runner.temp }}/validation-report/
+            ${{ runner.temp }}/monthly-development/
+            ${{ runner.temp }}/monthly-holdout/
           if-no-files-found: error

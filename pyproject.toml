@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "model-risk-lab"
-version = "0.1.1"
+version = "0.2.0"
 description = "Reproducible model validation experiments with synthetic data"
 requires-python = ">=3.11"
 readme = "README.md"
@@ -19,6 +19,7 @@ dev = ["pytest>=8,<10", "ruff>=0.12,<1"]
 
 [project.scripts]
 model-risk-lab = "model_risk_lab.report:main"
+model-risk-forecast = "model_risk_lab.forecast_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
