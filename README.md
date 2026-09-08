@@ -16,6 +16,8 @@ The focus is on finding failure modes and explaining evidence, rather than maxim
 **[Read the generated validation report →](docs/sample/REPORT.md)** ·
 [Architecture](docs/ARCHITECTURE.md) · [Learning notes / 学习入口](docs/LEARNING_NOTES.md)
 
+[Second review: failure cases and corrections](docs/REVALIDATION.md)
+
 ![Credit validation with synthetic data](docs/sample/credit_validation.svg)
 
 ## Run locally
@@ -34,6 +36,15 @@ model-risk-lab --seed 20260907 --output outputs/reproduction
 
 Open `outputs/reproduction/REPORT.md`. The command produces the synthetic inputs,
 predictions, charts, fold metrics, code hashes and dependency versions.
+The destination must be new: complete evidence is built in a temporary sibling directory,
+then published together. A failed run leaves no report at the requested destination and
+never updates an earlier bundle. Verify the saved file inventory and checksums with:
+
+```bash
+model-risk-lab --verify outputs/reproduction
+```
+
+The checksum file detects missing or changed evidence; it is not a signature or a model approval.
 [requirements-reproduce.txt](requirements-reproduce.txt) records the sample's numerical environment;
 the package accepts a broader compatible range and CI exercises supported Python versions
 using the recorded numerical versions. After changing code, reinstall the package or run

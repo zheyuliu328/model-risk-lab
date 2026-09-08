@@ -50,11 +50,17 @@ Three invented scenarios × two payoff types × five Greeks × nine predetermine
 270 estimates. Bump scales are S for spot derivatives, sigma for vega, and 1 for either rate.
 The relative sizes are 0.02, 0.01, 0.005, 0.001, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8.
 Every up/base/down price, derivative and error is retained. No best bump is selected.
+Bumps that cannot change the input float, or yield a zero/non-finite difference denominator,
+are rejected explicitly. This prevents an unrepresentable step from masquerading as a zero
+derivative; representable but cancellation-prone steps remain visible in the experiment.
 
 The ordinary-scenario derivative tests use a fixed relative bump of 1e-4 and
 `|estimate-analytic| <= max(2e-7, 2e-5*|analytic|)` (pytest's absolute/relative rule),
 at unit notional. This is an experiment tolerance, not a market or regulatory standard.
 Parity is checked separately to absolute precision 1e-14 in the specified cases.
+An additional ordinary-range grid compares 324 call/put prices with direct numerical integration
+of the discounted lognormal payoff and checks the inverse-quote identity. That integration uses
+a predeclared +/-12 standard-normal-shock bound; it does not certify arbitrary extreme tails.
 
 ## What the checks do and do not prove
 

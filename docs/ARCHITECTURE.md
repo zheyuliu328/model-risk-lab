@@ -26,4 +26,8 @@ flowchart LR
 Runtime has no network or credential integration. Generated files default to ignored `outputs/`.
 To update the committed example, regenerate from the documented seed and review every changed file.
 The manifest records source hashes, input hash and installed numerical-library versions.
+Generation requires a new output path, builds in a temporary sibling directory, and publishes
+the completed directory in one rename. It never refreshes an existing report in place.
+`checksums.json` covers every evidence file (excluding itself); `--verify` checks both inventory
+and bytes, so a stale chart or incomplete copied bundle is detectable.
 Hashes allow reproduction checks; they do not certify correctness or prove a dataset's ownership.
