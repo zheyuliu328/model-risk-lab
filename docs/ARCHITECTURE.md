@@ -2,6 +2,8 @@
 
 The two numerical experiments are independent. They meet only in the report generator.
 Neither imports an earlier portfolio prototype or reads files from another repository.
+The separate monthly candidate producer accepts caller-declared observations through a bounded
+JSON contract. It shares no training state with those teaching experiments.
 
 ```mermaid
 flowchart LR
@@ -20,6 +22,11 @@ flowchart LR
 - `fx.py` owns input units, European option prices and mathematical sensitivity checks.
 - `credit.py` owns synthetic data generation, causal features, training and holdout evaluation.
 - `report.py` owns file generation and presentation. A report cannot confer model approval.
+- `forecast.py` is a standalone NumPy-only monthly OLS kernel with explicit information timing,
+  complete candidate accounting, development selection and optional holdout scoring.
+- `forecast_cli.py` owns validated JSON intake and atomic publication of complete producer evidence.
+  Forecast Review Workbench reuses a versioned copy of this public kernel for its local CSV/XLSX GUI;
+  its own repository records the source commit and file checksum.
 - `tests/` exercises constraints through perturbed inputs, identities and independent price evaluations.
 - `docs/sample/` is a committed illustrative run, not a second implementation or a reference market dataset.
 

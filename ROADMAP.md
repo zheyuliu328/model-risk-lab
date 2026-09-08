@@ -6,8 +6,14 @@
 - [x] European FX prices, five analytical Greeks, 270 finite-difference estimates and boundary tests.
 - [x] Synthetic credit generator, five forward validation folds, two baselines and a locked holdout.
 - [x] Portable evidence report with data/code hashes and reproducibility tests.
+- [x] Configurable monthly OLS producer: one to five declared features, single/pair candidates,
+  two baselines, train-only scaling, explicit release delays, retained failures, an installed CLI,
+  development-only selection and separately revealed holdout evidence.
 
-## Next: macroeconomic release delays
+## Next: broader release-delay sensitivity in the quarterly teaching experiment
+
+The configurable monthly producer already enforces `lag >= horizon + release_delay`.
+The following seed-sweep question concerns the separate quarterly credit teaching experiment.
 
 Question: how much do conclusions change when an observation exists but was not yet published?
 

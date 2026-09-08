@@ -1,3 +1,3 @@
-"""Independent educational validation experiments; all inputs are synthetic."""
+"""Independent validation experiments and local candidate screening tools."""
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
